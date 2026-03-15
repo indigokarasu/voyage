@@ -26,7 +26,7 @@ Travel planning, itinerary construction, and reservation management. Builds opti
 
 ## 📊 Output & Journals
 
-Produces: Produces trip records, itinerary versions with edit history, and reservation logs.
+Trip records, itinerary versions with edit history, and reservation logs.
 
 ---
 
