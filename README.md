@@ -1,12 +1,12 @@
 # 🗺️ voyage
 
-Planning and navigation system. Maps out workflows and optimizes execution paths.
+Travel planning, itinerary construction, and reservation management. Builds optimized itineraries with lodging, dining, and activity recommendations.
 
 ---
 
 ## 📖 Overview
 
-Voyage plans and navigates workflows. Decomposes goals into steps, optimizes execution paths, and tracks progress.
+Voyage is a core component of the Indigo system. See SKILL.md for operational details.
 
 ---
 
@@ -18,29 +18,15 @@ Voyage plans and navigates workflows. Decomposes goals into steps, optimizes exe
 git clone https://github.com/indigokarasu/voyage.git
 ```
 
-### 🛠️ Tool Surface
+### 🛠️ Configuration
 
-```
-voyage.plan_workflow(goal, ...)      📋 Plan workflow for goal
-voyage.optimize_path(steps, ...)     🗺️ Optimize execution path
-voyage.get_next_step()               ⏭️ Get next step in plan
-voyage.track_progress()              📊 Track workflow progress
-voyage.alternative_routes(...)       🔄 Find alternative paths
-```
+Read `SKILL.md` for:
+- ⚙️ Operational behavior
+- 🔗 Skill cooperation
+- 📋 Tool surface
+- 🔒 Privacy and data handling
 
-### 📤 Output
-
-- **voyage_plan** — Decomposed workflow steps and dependencies
-- **voyage_optimization** — Path optimization analysis
-- **voyage_progress** — Execution progress and checkpoints
-
----
-
-## ⚙️ Configuration
-
-Read `SKILL.md` for operational details, planning algorithms, and cooperation with other skills.
-
-Read `references/` for schemas and examples.
+Read `references/` for detailed schemas, heuristics, and examples.
 
 ---
 
