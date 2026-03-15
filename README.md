@@ -1,17 +1,36 @@
-# Voyage
+# 🗺️ voyage
 
-Travel planning, itinerary construction, and reservation management. Builds optimized itineraries with lodging, dining, and activity recommendations grounded in constraints and preferences.
+Planning and navigation system. Maps out workflows and optimizes execution paths.
 
-## Repository Structure
+---
 
-- `ocas-voyage/` - Skill package source
-- `spec/` - Specification and build documentation
+## 📖 Overview
 
-## Installation
+Voyage handles core responsibilities in the Indigo system. See SKILL.md for operational details.
 
-This skill package is available on GitHub. To use it, clone this repository and follow the installation instructions in your skill management system.
+---
 
+## 🚀 Quick Start
 
-## License
+### 📦 Installation
+
+Clone into your skill management system:
+```bash
+git clone https://github.com/indigokarasu/voyage.git
+```
+
+### 🛠️ Configuration
+
+Read `SKILL.md` for:
+- ⚙️ Operational behavior
+- 🔗 Skill cooperation
+- 📋 Tool surface
+- 🔒 Privacy and data handling
+
+Read `references/` for detailed schemas, heuristics, and examples.
+
+---
+
+## 📄 License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
