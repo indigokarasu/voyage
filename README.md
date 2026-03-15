@@ -1,12 +1,12 @@
-# voyage
+# 🗺️ voyage
 
-🗺️ Planning and navigation system. Maps out workflows and optimizes execution paths.
+Planning and navigation system. Maps out workflows and optimizes execution paths.
 
 ---
 
 ## 📖 Overview
 
-Uvoyage handles core responsibilities in the Indigo system. See SKILL.md for operational details.
+Voyage plans and navigates workflows. Decomposes goals into steps, optimizes execution paths, and tracks progress.
 
 ---
 
@@ -14,20 +14,33 @@ Uvoyage handles core responsibilities in the Indigo system. See SKILL.md for ope
 
 ### 📦 Installation
 
-Clone into your skill management system:
 ```bash
 git clone https://github.com/indigokarasu/voyage.git
 ```
 
-### 🛠️ Configuration
+### 🛠️ Tool Surface
 
-Read `SKILL.md` for:
-- ⚙️ Operational behavior
-- 🔗 Skill cooperation
-- 📋 Tool surface
-- 🔒 Privacy and data handling
+```
+voyage.plan_workflow(goal, ...)      📋 Plan workflow for goal
+voyage.optimize_path(steps, ...)     🗺️ Optimize execution path
+voyage.get_next_step()               ⏭️ Get next step in plan
+voyage.track_progress()              📊 Track workflow progress
+voyage.alternative_routes(...)       🔄 Find alternative paths
+```
 
-Read `references/` for detailed schemas, heuristics, and examples.
+### 📤 Output
+
+- **voyage_plan** — Decomposed workflow steps and dependencies
+- **voyage_optimization** — Path optimization analysis
+- **voyage_progress** — Execution progress and checkpoints
+
+---
+
+## ⚙️ Configuration
+
+Read `SKILL.md` for operational details, planning algorithms, and cooperation with other skills.
+
+Read `references/` for schemas and examples.
 
 ---
 
