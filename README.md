@@ -1,32 +1,44 @@
-# 🗺️ voyage
+# 🗺️ Voyage
 
-Travel planning, itinerary construction, and reservation management. Builds optimized itineraries with lodging, dining, and activity recommendations.
+Voyage builds complete travel itineraries from goals and constraints. It plans routes, recommends activities and dining, identifies lodging options, and manages reservations. Voyage optimizes for preferences while respecting constraints (budget, time, accessibility). Every itinerary is editable and reservations are auditable.
 
 ---
 
 ## 📖 Overview
 
-Voyage is a core component of the Indigo system. See SKILL.md for operational details.
+Travel planning, itinerary construction, and reservation management. Builds optimized itineraries with lodging, dining, and activity recommendations.
 
 ---
 
-## 🚀 Quick Start
+## 🔧 Tool Surface
 
-### 📦 Installation
+- `voyage.trip.create` — create trip with destination, duration, constraints
+- `voyage.itinerary.generate` — generate initial itinerary
+- `voyage.itinerary.edit` — modify itinerary (reorder, swap activities)
+- `voyage.recommendations.lodging` — lodging options with reviews and availability
+- `voyage.recommendations.dining` — dining recommendations matching preferences
+- `voyage.recommendations.activities` — activities with duration and suitability
+- `voyage.reservations.list` — current reservations with confirmation details
+- `voyage.reservations.manage` — modify or cancel reservations
+- `voyage.status` — active trips, itinerary completion, reservation status
 
-```bash
-git clone https://github.com/indigokarasu/voyage.git
-```
+---
 
-### 🛠️ Configuration
+## 📊 Output & Journals
 
-Read `SKILL.md` for:
-- ⚙️ Operational behavior
-- 🔗 Skill cooperation
-- 📋 Tool surface
-- 🔒 Privacy and data handling
+Produces: Produces trip records, itinerary versions with edit history, and reservation logs.
 
-Read `references/` for detailed schemas, heuristics, and examples.
+---
+
+
+
+---
+
+## 📚 Documentation
+
+Read `SKILL.md` for operational details, schemas, and validation rules.
+
+See `references/` for detailed specifications and examples.
 
 ---
 
