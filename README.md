@@ -1,12 +1,12 @@
-# 🗺️ voyage
+# voyage
 
-Planning and navigation system. Maps out workflows and optimizes execution paths.
+🗺️ Planning and navigation system. Maps out workflows and optimizes execution paths.
 
 ---
 
 ## 📖 Overview
 
-Voyage handles core responsibilities in the Indigo system. See SKILL.md for operational details.
+Uvoyage handles core responsibilities in the Indigo system. See SKILL.md for operational details.
 
 ---
 
