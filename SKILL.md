@@ -33,6 +33,53 @@ Voyage owns travel planning, itinerary construction, and reservation management.
 Voyage does not own: web research (Sift), preference persistence (Taste), knowledge graph (Elephas), communications (Dispatch).
 
 
+
+## Functions
+
+### voyage_plan_trip()
+
+**Purpose:** create a full trip plan from destination, dates, and constraints
+
+**Returns:** Operation result
+
+### voyage_recommend_lodging()
+
+**Purpose:** lodging recommendations based on trip context
+
+**Returns:** Operation result
+
+### voyage_recommend_food()
+
+**Purpose:** restaurant recommendations based on route and preferences
+
+**Returns:** Operation result
+
+### voyage_recommend_activities()
+
+**Purpose:** activity recommendations based on interests and logistics
+
+**Returns:** Operation result
+
+### voyage_optimize_itinerary()
+
+**Purpose:** optimize an existing itinerary for feasibility and logistics
+
+**Returns:** Operation result
+
+### voyage_status()
+
+**Purpose:** current plan state, pending reservations, open decisions
+
+**Returns:** Operation result
+
+### voyage_journal()
+
+**Purpose:** write journal for the current run; called at end of every run
+
+**Returns:** Operation result
+
+
+
 ## Commands
 
 - `voyage.plan.trip` — create a full trip plan from destination, dates, and constraints
