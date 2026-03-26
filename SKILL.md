@@ -1,12 +1,14 @@
 ---
 name: ocas-voyage
-description: Voyage: travel planning, itinerary construction, and reservation management. Use when the user wants to plan a trip, build an itinerary, find lodging or restaurants, optimize travel logistics, or manage reservations. Trigger phrases: 'plan a trip', 'build itinerary', 'where to stay', 'restaurant recommendations for my trip', 'travel to', 'optimize my itinerary'. Do not use for generic travel inspiration, visa advice, or airfare-only optimization.
+source: https://github.com/indigokarasu/voyage
+install: openclaw skill install https://github.com/indigokarasu/voyage
+description: Use when planning a trip, building or optimizing an itinerary, finding lodging, restaurants, or activities, or managing reservation checklists. Trigger phrases: 'plan a trip', 'build itinerary', 'where to stay', 'restaurant recommendations for my trip', 'travel to', 'optimize my itinerary'. Do not use for generic travel inspiration, visa advice, or airfare-only optimization.
 metadata: {"openclaw":{"emoji":"🧭"}}
 ---
 
 # Voyage
 
-Voyage builds travel itineraries with lodging, dining, and activity recommendations. It respects constraints (budget, dietary, pace), optimizes logistics, and produces reservation-ready plans.
+Voyage builds complete, constraint-aware travel itineraries — taking a destination, dates, budget, dietary preferences, and pace, then assembling lodging, dining, and activity recommendations into a logistics-optimized plan that is ready for reservation without auto-booking anything. It never presents uncertain operating hours or availability as confirmed fact, and surfaces cost implications throughout so the plan remains honest about what it actually knows.
 
 
 ## When to use
@@ -31,53 +33,6 @@ Voyage builds travel itineraries with lodging, dining, and activity recommendati
 Voyage owns travel planning, itinerary construction, and reservation management.
 
 Voyage does not own: web research (Sift), preference persistence (Taste), knowledge graph (Elephas), communications (Dispatch).
-
-
-
-## Functions
-
-### voyage_plan_trip()
-
-**Purpose:** create a full trip plan from destination, dates, and constraints
-
-**Returns:** Operation result
-
-### voyage_recommend_lodging()
-
-**Purpose:** lodging recommendations based on trip context
-
-**Returns:** Operation result
-
-### voyage_recommend_food()
-
-**Purpose:** restaurant recommendations based on route and preferences
-
-**Returns:** Operation result
-
-### voyage_recommend_activities()
-
-**Purpose:** activity recommendations based on interests and logistics
-
-**Returns:** Operation result
-
-### voyage_optimize_itinerary()
-
-**Purpose:** optimize an existing itinerary for feasibility and logistics
-
-**Returns:** Operation result
-
-### voyage_status()
-
-**Purpose:** current plan state, pending reservations, open decisions
-
-**Returns:** Operation result
-
-### voyage_journal()
-
-**Purpose:** write journal for the current run; called at end of every run
-
-**Returns:** Operation result
-
 
 
 ## Commands
@@ -200,8 +155,9 @@ public
 
 ## Support file map
 
-File | When to read
-`references/voyage_schemas.md` | Before creating plans, itineraries, or reservations
-`references/itinerary_constraints.md` | Before constraint application or optimization
-`references/recommendation_style.md` | Before generating recommendations
-`references/journal.md` | Before voyage.journal; at end of every run
+| File | When to read |
+|---|---|
+| `references/voyage_schemas.md` | Before creating plans, itineraries, or reservations |
+| `references/itinerary_constraints.md` | Before constraint application or optimization |
+| `references/recommendation_style.md` | Before generating recommendations |
+| `references/journal.md` | Before voyage.journal; at end of every run |
