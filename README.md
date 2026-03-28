@@ -43,7 +43,7 @@ Voyage builds travel itineraries that are actually usable -- respecting constrai
 
 ## Changelog
 
-### v2.2.1 -- March 27, 2026
+### v2.3.0 -- March 27, 2026
 - Added `voyage.update` command and midnight cron for automatic version-checked self-updates
 
 ### v2.2.0 -- March 22, 2026
