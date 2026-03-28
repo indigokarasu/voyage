@@ -2,7 +2,7 @@
 name: ocas-voyage
 source: https://github.com/indigokarasu/voyage
 install: openclaw skill install https://github.com/indigokarasu/voyage
-description: Use when planning a trip, building or optimizing an itinerary, finding lodging, restaurants, or activities, or managing reservation checklists. Trigger phrases: 'plan a trip', 'build itinerary', 'where to stay', 'restaurant recommendations for my trip', 'travel to', 'optimize my itinerary'. Do not use for generic travel inspiration, visa advice, or airfare-only optimization.
+description: Use when planning a trip, building or optimizing an itinerary, finding lodging, restaurants, or activities, or managing reservation checklists. Trigger phrases: 'plan a trip', 'build itinerary', 'where to stay', 'restaurant recommendations for my trip', 'travel to', 'optimize my itinerary', 'update voyage'. Do not use for generic travel inspiration, visa advice, or airfare-only optimization.
 metadata: {"openclaw":{"emoji":"🧭"}}
 ---
 
