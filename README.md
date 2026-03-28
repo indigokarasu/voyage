@@ -19,10 +19,11 @@ Voyage builds travel itineraries that are actually usable -- respecting constrai
 | `voyage.optimize.itinerary` | Optimize an existing itinerary for feasibility and logistics |
 | `voyage.status` | Current plan state, pending reservations, open decisions |
 | `voyage.journal` | Write journal for the current run |
+| `voyage.update` | Pull latest from GitHub source (preserves journals and data) |
 
 ## Setup
 
-`voyage.init` runs automatically on first invocation and creates all required directories, config.json, state.json, and JSONL files. No manual setup is required. Voyage is purely reactive -- no scheduled tasks.
+`voyage.init` runs automatically on first invocation and creates all required directories, config.json, state.json, and JSONL files. No manual setup is required. It also registers the `voyage:update` cron job (midnight daily) for automatic self-updates.
 
 ## Dependencies
 
@@ -36,9 +37,14 @@ Voyage builds travel itineraries that are actually usable -- respecting constrai
 
 ## Scheduled Tasks
 
-This skill is purely reactive. No scheduled tasks.
+| Job | Mechanism | Schedule | Command |
+|---|---|---|---|
+| `voyage:update` | cron | `0 0 * * *` (midnight daily) | Self-update from GitHub source |
 
 ## Changelog
+
+### v2.2.1 -- March 27, 2026
+- Added `voyage.update` command and midnight cron for automatic version-checked self-updates
 
 ### v2.2.0 -- March 22, 2026
 - Routing improvements
