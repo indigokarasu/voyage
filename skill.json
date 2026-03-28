@@ -13,5 +13,23 @@
       "~/openclaw/data/ocas-voyage/",
       "~/openclaw/journals/ocas-voyage/"
     ]
-  }
+  },
+  "self_update": {
+    "source": "https://github.com/indigokarasu/voyage",
+    "mechanism": "version-checked tarball from GitHub via gh CLI",
+    "command": "voyage.update",
+    "requires_binaries": [
+      "gh",
+      "tar",
+      "python3"
+    ]
+  },
+  "scheduled_tasks": [
+    {
+      "name": "voyage:update",
+      "schedule": "0 0 * * *",
+      "command": "voyage.update",
+      "description": "Self-update from GitHub source"
+    }
+  ]
 }
