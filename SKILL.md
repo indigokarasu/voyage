@@ -35,6 +35,17 @@ Voyage owns travel planning, itinerary construction, and reservation management.
 Voyage does not own: web research (Sift), preference persistence (Taste), knowledge graph (Elephas), communications (Dispatch).
 
 
+## Ontology types
+
+Voyage works with these types from `spec-ocas-ontology.md`:
+
+- **Place** — venues, airports, hotels, restaurants, attractions. Extracted during destination research and itinerary construction.
+- **Concept/Event** — trips and travel events (departure, arrival, check-in, activity). Stored in itinerary records.
+- **Concept/Action** — booking actions (reserved, cancelled, modified). Recorded in Action Journals.
+
+Voyage does not emit Signals to Elephas. It maintains its own trip and itinerary state in `~/openclaw/data/ocas-voyage/`.
+
+
 ## Commands
 
 - `voyage.plan.trip` — create a full trip plan from destination, dates, and constraints
