@@ -42,8 +42,9 @@ Voyage works with these types from `spec-ocas-ontology.md`:
 - **Place** — venues, airports, hotels, restaurants, attractions. Extracted during destination research and itinerary construction.
 - **Concept/Event** — trips and travel events (departure, arrival, check-in, activity). Stored in itinerary records.
 - **Concept/Action** — booking actions (reserved, cancelled, modified). Recorded in Action Journals.
+- **Entity/Person** — travel companions mentioned during trip planning.
 
-Voyage does not emit Signals to Elephas. It maintains its own trip and itinerary state in `~/openclaw/data/ocas-voyage/`.
+Voyage maintains its own trip and itinerary state in `~/openclaw/data/ocas-voyage/`. Entity observations are recorded in journal outputs for downstream Chronicle ingestion.
 
 
 ## Commands
@@ -140,11 +141,23 @@ skill_okrs:
 - Sift — web research for venue information and availability
 - Taste — may read taste model for preference-aware recommendations
 - Weave — may read social graph for trip companion context
+- Elephas — journal entity observations consumed during Chronicle ingestion
 
 
 ## Journal outputs
 
 Action Journal — all planning, recommendation, and reservation runs.
+
+When entities are encountered during a run, include structured entity observations in `decision.payload`:
+
+- `entities_observed` — list of entities encountered (Place, Concept/Event, Concept/Action, Entity/Person), each with type, name, and context
+- `relationships_observed` — connections between entities (e.g., a person associated with a trip, a restaurant located in a destination)
+- `preferences_observed` — user preferences inferred from planning choices (e.g., budget range, dietary needs, pace preference)
+
+Each entity observation must include a `user_relevance` field:
+- `user` — entity is directly related to the user's world (destinations, hotels, companions, reservations). Most Voyage entities are `user`-relevant since they represent the user's actual travel plans and destinations.
+- `agent_only` — entity encountered incidentally (e.g., a landmark mentioned only as a routing waypoint, not as a destination)
+- `unknown` — relevance is unclear
 
 
 ## Initialization
