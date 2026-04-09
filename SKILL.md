@@ -12,7 +12,7 @@ description: >
 metadata:
   author: Indigo Karasu
   email: mx.indigo.karasu@gmail.com
-  version: "2.7.0"
+  version: "2.7.1"
   hermes:
     tags: [travel, itinerary, lodging]
     category: execution
@@ -25,14 +25,14 @@ metadata:
     visibility: public
     filesystem:
       read:
-        - "$OCAS_DATA_ROOT/data/ocas-voyage/"
-        - "$OCAS_DATA_ROOT/journals/ocas-voyage/"
-        - "$OCAS_DATA_ROOT/data/ocas-taste/"
-        - "$OCAS_DATA_ROOT/data/ocas-weave/"
+        - "{agent_root}/commons/data/ocas-voyage/"
+        - "{agent_root}/commons/journals/ocas-voyage/"
+        - "{agent_root}/commons/data/ocas-taste/"
+        - "{agent_root}/commons/data/ocas-weave/"
       write:
-        - "$OCAS_DATA_ROOT/data/ocas-voyage/"
-        - "$OCAS_DATA_ROOT/data/ocas-voyage/itineraries/"
-        - "$OCAS_DATA_ROOT/journals/ocas-voyage/"
+        - "{agent_root}/commons/data/ocas-voyage/"
+        - "{agent_root}/commons/data/ocas-voyage/itineraries/"
+        - "{agent_root}/commons/journals/ocas-voyage/"
     self_update:
       source: "https://github.com/indigokarasu/voyage"
       mechanism: "version-checked tarball from GitHub via gh CLI"
@@ -116,7 +116,7 @@ Voyage works with these types from `spec-ocas-ontology.md`:
 - **Concept/Action** — booking actions (reserved, cancelled, modified). Recorded in Action Journals.
 - **Entity/Person** — travel companions mentioned during trip planning.
 
-Voyage maintains its own trip and itinerary state in `$OCAS_DATA_ROOT/data/ocas-voyage/`. Entity observations are recorded in journal outputs for downstream Chronicle ingestion.
+Voyage maintains its own trip and itinerary state in `{agent_root}/commons/data/ocas-voyage/`. Entity observations are recorded in journal outputs for downstream Chronicle ingestion.
 
 
 ## Commands
@@ -150,14 +150,14 @@ After every Voyage command:
 ## Storage layout
 
 ```
-$OCAS_DATA_ROOT/data/ocas-voyage/
+{agent_root}/commons/data/ocas-voyage/
   config.json
   state.json
   events.jsonl
   decisions.jsonl
   plans/
 
-$OCAS_DATA_ROOT/journals/ocas-voyage/
+{agent_root}/commons/journals/ocas-voyage/
   YYYY-MM-DD/
     {run_id}.json
 ```
@@ -237,10 +237,10 @@ Each entity observation must include a `user_relevance` field:
 
 On first invocation of any Voyage command, run `voyage.init`:
 
-1. Create `$OCAS_DATA_ROOT/data/ocas-voyage/` and subdirectories (`plans/`, `itineraries/`)
+1. Create `{agent_root}/commons/data/ocas-voyage/` and subdirectories (`plans/`, `itineraries/`)
 2. Write default `config.json` and `state.json` if absent
 3. Create empty JSONL files: `events.jsonl`, `decisions.jsonl`
-4. Create `$OCAS_DATA_ROOT/journals/ocas-voyage/`
+4. Create `{agent_root}/commons/journals/ocas-voyage/`
 5. Register cron job `voyage:update` if not already present (check the platform scheduling registry first)
 6. Log initialization as a DecisionRecord in `decisions.jsonl`
 7. **Marriott Strider MCP setup** (run once; skip if `mcp-marriott` already in MCP config):
@@ -265,7 +265,7 @@ On first invocation of any Voyage command, run `voyage.init`:
    - `FLYAI_API_KEY` — set for enhanced Marriott AI results; skill works without it
 10. **GoPlaces check**:
     - Run: `openclaw skills list | grep goplaces`
-    - Record result in `$OCAS_DATA_ROOT/data/ocas-voyage/config.json` under `"goplaces_available": true/false`
+    - Record result in `{agent_root}/commons/data/ocas-voyage/config.json` under `"goplaces_available": true/false`
 
 ## Background tasks
 
