@@ -1,9 +1,58 @@
 ---
 name: ocas-voyage
-source: https://github.com/indigokarasu/voyage
-install: openclaw skill install https://github.com/indigokarasu/voyage
-description: Use when planning a trip, building or optimizing an itinerary, finding lodging, restaurants, or activities, or managing reservation checklists. Trigger phrases: 'plan a trip', 'build itinerary', 'where to stay', 'restaurant recommendations for my trip', 'travel to', 'optimize my itinerary', 'update voyage'. Do not use for generic travel inspiration, visa advice, or airfare-only optimization.
-metadata: {"openclaw":{"emoji":"🧭"}}
+description: >
+  Voyage: travel planning, itinerary construction, reservation management, and
+  lodging search. Parallel lodging search across Expedia, Marriott Bonvoy
+  (Strider MCP), Marriott AI, and Google Hotels. Uses Sift for destination
+  research and optionally GoPlaces for location enrichment. Trigger phrases:
+  'plan a trip', 'build itinerary', 'where to stay', 'find hotels in',
+  'Marriott near', 'compare lodging', 'restaurant recommendations for my
+  trip', 'travel to', 'optimize my itinerary', 'update voyage'. Do not use for
+  generic travel inspiration, visa advice, or airfare-only optimization.
+metadata:
+  author: Indigo Karasu
+  email: mx.indigo.karasu@gmail.com
+  version: "2.7.0"
+  hermes:
+    tags: [travel, itinerary, lodging]
+    category: execution
+    cron:
+      - name: "voyage:update"
+        schedule: "0 0 * * *"
+        command: "voyage.update"
+  openclaw:
+    skill_type: system
+    visibility: public
+    filesystem:
+      read:
+        - "$OCAS_DATA_ROOT/data/ocas-voyage/"
+        - "$OCAS_DATA_ROOT/journals/ocas-voyage/"
+        - "$OCAS_DATA_ROOT/data/ocas-taste/"
+        - "$OCAS_DATA_ROOT/data/ocas-weave/"
+      write:
+        - "$OCAS_DATA_ROOT/data/ocas-voyage/"
+        - "$OCAS_DATA_ROOT/data/ocas-voyage/itineraries/"
+        - "$OCAS_DATA_ROOT/journals/ocas-voyage/"
+    self_update:
+      source: "https://github.com/indigokarasu/voyage"
+      mechanism: "version-checked tarball from GitHub via gh CLI"
+      command: "voyage.update"
+      requires_binaries: [gh, tar, python3]
+    requires:
+      mcp:
+        - name: "marriott"
+          description: "Marriott Bonvoy hotel search, loyalty points, upgrades, and mobile key via Strider MCP"
+          required: false
+      bins:
+        - "agent-browser"
+      credentials:
+        - name: "flyai_api_key"
+          description: "FlyAI API key for enhanced Marriott AI results and package search"
+          required: false
+    cron:
+      - name: "voyage:update"
+        schedule: "0 0 * * *"
+        command: "voyage.update"
 ---
 
 # Voyage
@@ -67,7 +116,7 @@ Voyage works with these types from `spec-ocas-ontology.md`:
 - **Concept/Action** — booking actions (reserved, cancelled, modified). Recorded in Action Journals.
 - **Entity/Person** — travel companions mentioned during trip planning.
 
-Voyage maintains its own trip and itinerary state in `~/openclaw/data/ocas-voyage/`. Entity observations are recorded in journal outputs for downstream Chronicle ingestion.
+Voyage maintains its own trip and itinerary state in `$OCAS_DATA_ROOT/data/ocas-voyage/`. Entity observations are recorded in journal outputs for downstream Chronicle ingestion.
 
 
 ## Commands
@@ -101,14 +150,14 @@ After every Voyage command:
 ## Storage layout
 
 ```
-~/openclaw/data/ocas-voyage/
+$OCAS_DATA_ROOT/data/ocas-voyage/
   config.json
   state.json
   events.jsonl
   decisions.jsonl
   plans/
 
-~/openclaw/journals/ocas-voyage/
+$OCAS_DATA_ROOT/journals/ocas-voyage/
   YYYY-MM-DD/
     {run_id}.json
 ```
@@ -188,11 +237,11 @@ Each entity observation must include a `user_relevance` field:
 
 On first invocation of any Voyage command, run `voyage.init`:
 
-1. Create `~/openclaw/data/ocas-voyage/` and subdirectories (`plans/`, `itineraries/`)
+1. Create `$OCAS_DATA_ROOT/data/ocas-voyage/` and subdirectories (`plans/`, `itineraries/`)
 2. Write default `config.json` and `state.json` if absent
 3. Create empty JSONL files: `events.jsonl`, `decisions.jsonl`
-4. Create `~/openclaw/journals/ocas-voyage/`
-5. Register cron job `voyage:update` if not already present (check `openclaw cron list` first)
+4. Create `$OCAS_DATA_ROOT/journals/ocas-voyage/`
+5. Register cron job `voyage:update` if not already present (check the platform scheduling registry first)
 6. Log initialization as a DecisionRecord in `decisions.jsonl`
 7. **Marriott Strider MCP setup** (run once; skip if `mcp-marriott` already in MCP config):
    ```bash
@@ -216,7 +265,7 @@ On first invocation of any Voyage command, run `voyage.init`:
    - `FLYAI_API_KEY` — set for enhanced Marriott AI results; skill works without it
 10. **GoPlaces check**:
     - Run: `openclaw skills list | grep goplaces`
-    - Record result in `~/openclaw/data/ocas-voyage/config.json` under `"goplaces_available": true/false`
+    - Record result in `$OCAS_DATA_ROOT/data/ocas-voyage/config.json` under `"goplaces_available": true/false`
 
 ## Background tasks
 
@@ -225,7 +274,7 @@ On first invocation of any Voyage command, run `voyage.init`:
 | `voyage:update` | cron | `0 0 * * *` (midnight daily) | `voyage.update` |
 
 ```
-openclaw cron add --name voyage:update --schedule "0 0 * * *" --command "voyage.update" --sessionTarget isolated --lightContext true --timezone America/Los_Angeles
+# Task declared in SKILL.md frontmatter metadata.{platform}.cron
 ```
 
 
