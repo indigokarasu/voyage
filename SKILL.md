@@ -12,7 +12,7 @@ description: >
 metadata:
   author: Indigo Karasu
   email: mx.indigo.karasu@gmail.com
-  version: "2.7.1"
+  version: "2.7.2"
   hermes:
     tags: [travel, itinerary, lodging]
     category: execution
@@ -100,7 +100,7 @@ Results ranked by: total real cost → loyalty/points value → cancellation fle
 
 See `references/lodging-sources.md` for per-source patterns and failure modes.
 
-**GoPlaces cooperation (optional):** If `ocas-goplaces` is installed, Voyage calls it to resolve ambiguous location input before search (geocoding, distance checks, neighborhood context). If not installed, Voyage surfaces unresolved location ambiguity to the user rather than guessing. Voyage checks for GoPlaces at runtime using `openclaw skills list`.
+**GoPlaces cooperation (optional):** If `ocas-goplaces` is installed, Voyage calls it to resolve ambiguous location input before search (geocoding, distance checks, neighborhood context). If not installed, Voyage surfaces unresolved location ambiguity to the user rather than guessing. Voyage checks for GoPlaces at runtime using the platform skill registry.
 
 **Total cost rule:** Always surface headline price + taxes + mandatory fees + cancellation flexibility before recommending. Never present a listing price as booking-final. See `references/total-cost.md`.
 
@@ -211,7 +211,7 @@ skill_okrs:
 ## Optional skill cooperation
 
 - **Sift** — all open web research: destination info, restaurant picks, activity recommendations, local knowledge. Voyage delegates to Sift via Sift's search stack; does not do raw web searches itself.
-- **GoPlaces** (`ocas-goplaces`) — location enrichment: geocoding, distance-to-airport/center, neighborhood context, disambiguation of ambiguous location input. Check at runtime: `openclaw skills list | grep goplaces`. If not installed, flag ambiguity to user.
+- **GoPlaces** (`ocas-goplaces`) — location enrichment: geocoding, distance-to-airport/center, neighborhood context, disambiguation of ambiguous location input. Check at runtime: `platform skill registry query | grep goplaces`. If not installed, flag ambiguity to user.
 - **Taste** — preference-aware recommendations (read-only)
 - **Weave** — trip companion context from social graph (read-only)
 - **Elephas** — entity observations emitted via journal
@@ -247,7 +247,7 @@ On first invocation of any Voyage command, run `voyage.init`:
    ```bash
    npm install -g @striderlabs/mcp-marriott
    ```
-   Add to OpenClaw MCP config:
+   Add to platform MCP config:
    ```json
    {
      "mcpServers": {
@@ -264,7 +264,7 @@ On first invocation of any Voyage command, run `voyage.init`:
 9. **Optional credentials** (skip if not available):
    - `FLYAI_API_KEY` — set for enhanced Marriott AI results; skill works without it
 10. **GoPlaces check**:
-    - Run: `openclaw skills list | grep goplaces`
+    - Run: `platform skill registry query | grep goplaces`
     - Record result in `{agent_root}/commons/data/ocas-voyage/config.json` under `"goplaces_available": true/false`
 
 ## Background tasks
@@ -318,7 +318,7 @@ public
 This skill self-updates every 24 hours via:
 
 ```bash
-openclaw voyage.update
+voyage.update
 ```
 
 This pulls the latest version from GitHub and restarts the skill's background tasks if applicable.
