@@ -43,8 +43,8 @@ metadata:
         - name: "marriott"
           description: "Marriott Bonvoy hotel search, loyalty points, upgrades, and mobile key via Strider MCP"
           required: false
-      bins:
-        - "agent-browser"
+      capabilities:
+        - "web-browsing"
       credentials:
         - name: "flyai_api_key"
           description: "FlyAI API key for enhanced Marriott AI results and package search"
@@ -258,9 +258,7 @@ On first invocation of any Voyage command, run `voyage.init`:
    }
    ```
    Run OAuth login: `marriott.mobile_key` — opens browser for Bonvoy account login. Re-run if session expires.
-8. **Google Hotels setup** (run once; skip if `agent-browser` already available):
-   - Check: `which agent-browser`
-   - If not found, note that Google Hotels search will be unavailable; Expedia and Marriott cover this path
+8. **Google Hotels setup**: Google Hotels search requires web browsing access. If the system provides web browsing capability, this is available automatically. If unavailable, Expedia and Marriott cover this path.
 9. **Optional credentials** (skip if not available):
    - `FLYAI_API_KEY` — set for enhanced Marriott AI results; skill works without it
 10. **GoPlaces check**:
