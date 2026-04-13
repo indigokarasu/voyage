@@ -1,3 +1,9 @@
+## [2.7.5] - 2026-04-12
+
+### Changed
+- Replaced `agent-browser` binary requirement with `web-browsing` capability declaration for platform portability
+- Google Hotels setup clarified: available automatically when web browsing capability is present
+
 ## [2026-04-05] Parallel lodging stack + GoPlaces cooperation
 
 ### Added

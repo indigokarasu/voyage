@@ -12,7 +12,7 @@ description: >
 metadata:
   author: Indigo Karasu
   email: mx.indigo.karasu@gmail.com
-  version: "2.7.3"
+  version: "2.7.5"
   hermes:
     tags: [travel, itinerary, lodging]
     category: execution
