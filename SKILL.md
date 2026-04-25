@@ -18,7 +18,7 @@ metadata:
     category: execution
     cron:
       - name: "voyage:update"
-        schedule: "0 0 * * *"
+        schedule: "15 7 * * *"
         command: "voyage.update"
   openclaw:
     skill_type: system
@@ -51,7 +51,7 @@ metadata:
           required: false
     cron:
       - name: "voyage:update"
-        schedule: "0 0 * * *"
+        schedule: "15 7 * * *"
         command: "voyage.update"
 ---
 
