@@ -1,65 +1,21 @@
 ---
 name: ocas-voyage
-description: >
-  Voyage: travel planning, itinerary construction, reservation management,
-  lodging search, and flight search. Parallel lodging search across Expedia,
-  Marriott Bonvoy (Strider MCP), Marriott AI, and Google Hotels. Flight search
-  via Google Flights (fli library). Uses Sift for destination research and
-  optionally GoPlaces for location enrichment. Trigger phrases:
-  'plan a trip', 'build itinerary', 'where to stay', 'find hotels in',
-  'Marriott near', 'compare lodging', 'restaurant recommendations for my
-  trip', 'travel to', 'optimize my itinerary', 'update voyage',
-  'find flights', 'cheapest flights to', 'flight prices', 'fly from',
-  'airfare to', 'best time to fly'. Do not use for
-  generic travel inspiration, visa advice, or points-only optimization.
+description: 'Voyage: travel planning, itinerary construction, reservation management,
+  lodging search, and flight search. Parallel lodging search across Expedia, Marriott
+  Bonvoy (Strider MCP), Marriott AI, and Google Hotels. Flight search via Google Flights
+  (fli library). Uses Sift for destination research and optionally GoPlaces for location
+  enrichment. Trigger phrases: ''plan a trip'', ''build itinerary'', ''where to stay'',
+  ''find hotels in'', ''Marriott near'', ''compare lodging'', ''restaurant recommendations
+  for my trip'', ''travel to'', ''optimize my itinerary'', ''update voyage'', ''find
+  flights'', ''cheapest flights to'', ''flight prices'', ''fly from'', ''airfare to'',
+  ''best time to fly''. Do not use for generic travel inspiration, visa advice, or
+  points-only optimization.
+
+  '
+license: MIT
 metadata:
   author: Indigo Karasu
-  email: mx.indigo.karasu@gmail.com
-  version: "2.8.0"
-  hermes:
-    tags: [travel, itinerary, lodging, flights]
-    category: execution
-    cron:
-      - name: "voyage:update"
-        schedule: "15 7 * * *"
-        command: "voyage.update"
-  openclaw:
-    skill_type: system
-    visibility: public
-    filesystem:
-      read:
-        - "{agent_root}/commons/data/ocas-voyage/"
-        - "{agent_root}/commons/journals/ocas-voyage/"
-        - "{agent_root}/commons/data/ocas-taste/"
-        - "{agent_root}/commons/data/ocas-weave/"
-      write:
-        - "{agent_root}/commons/data/ocas-voyage/"
-        - "{agent_root}/commons/data/ocas-voyage/itineraries/"
-        - "{agent_root}/commons/journals/ocas-voyage/"
-    self_update:
-      source: "https://github.com/indigokarasu/voyage"
-      mechanism: "version-checked tarball from GitHub via gh CLI"
-      command: "voyage.update"
-      requires_binaries: [gh, tar, python3]
-    requires:
-      mcp:
-        - name: "marriott"
-          description: "Marriott Bonvoy hotel search, loyalty points, upgrades, and mobile key via Strider MCP"
-          required: false
-      capabilities:
-        - "web-browsing"
-      packages:
-        - name: "flights"
-          description: "Google Flights search via fli library. Install: /usr/local/lib/hermes-agent/venv/bin/python3 -m pip install flights"
-          required: false
-      credentials:
-        - name: "flyai_api_key"
-          description: "FlyAI API key for enhanced Marriott AI results and package search"
-          required: false
-    cron:
-      - name: "voyage:update"
-        schedule: "15 7 * * *"
-        command: "voyage.update"
+  version: 2.8.0
 ---
 
 # Voyage
