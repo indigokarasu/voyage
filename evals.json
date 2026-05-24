@@ -1,0 +1,13 @@
+{
+  "skill": "ocas-voyage",
+  "version": "1.0.0",
+  "description": "Evaluation test cases for ocas-voyage",
+  "evals": [
+    {
+      "id": "voyage-plan-trip",
+      "prompt": "Plan a 3-day trip to Tokyo for next month",
+      "expected_behavior": "Uses voyage.plan.trip with parallel lodging search across Expedia, Marriott, and Google Hotels",
+      "assertions": ["Must search multiple lodging sources in parallel", "Must include flight search via fli library", "Must respect dietary preferences"]
+    }
+  ]
+}
