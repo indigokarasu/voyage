@@ -337,16 +337,24 @@ On first invocation of any Voyage command, run `voyage.init`:
 public
 
 
+## Gotchas
+
+- **GoPlaces is optional, not required** — If `ocas-goplaces` is not installed, Voyage surfaces unresolved location ambiguity to the user rather than guessing. The skill works normally but location resolution depends on user input.
+- **Total cost rule is mandatory** — Always surface headline price + taxes + mandatory fees + cancellation flexibility before recommending. Presenting a listing price as booking-final violates the booking gate rule.
+- **Flight prices are volatile** — Always include an "as of" timestamp in flight search results. Prices change frequently and are never guaranteed. The `fli` library queries Google Flights in real-time.
+- **Multi-city searches may time out** — For complex multi-leg itineraries, search legs individually and combine results rather than using a single multi-city query.
+- **Reference files are authoritative over SKILL.md** — If a concept is described in both SKILL.md and a reference file, the reference file wins. Always read the relevant reference before executing a workflow.
+
 ## Support file map
 
 | File | When to read |
-|---|---|
-| `references/voyage_schemas.md` | Before creating plans, itineraries, or reservations |
-| `references/itinerary_constraints.md` | Before constraint application or optimization |
-| `references/recommendation_style.md` | Before generating recommendations |
-| `references/journal.md` | Before voyage.journal; at end of every run |
-| `references/flights.md` | Before any flight search; contains API patterns, airport resolution, failure modes |
-| `references/lodging-sources.md` | Before lodging search; per-source patterns and failure modes |
+|------|-------------|
+| `references/voyage_schemas.md` | Before creating plans, itineraries, or reservations; when validating data structures |
+| `references/itinerary_constraints.md` | Before constraint application or optimization; when checking feasibility rules |
+| `references/recommendation_style.md` | Before generating recommendations; when checking tone and format guidelines |
+| `references/journal.md` | Before calling voyage.journal; at end of every run |
+| `references/flights.md` | Before any flight search; when checking API patterns, airport resolution, or failure modes |
+| `references/lodging-sources.md` | Before lodging search; when checking per-source patterns and failure modes |
 
 ## Update command
 
