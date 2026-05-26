@@ -1,46 +1,49 @@
 ---
 name: ocas-voyage
-description: 'Voyage: travel planning, itinerary construction, reservation management,
+description: >
+  Voyage: travel planning, itinerary construction, reservation management,
   lodging search, and flight search. Parallel lodging search across Expedia, Marriott
   Bonvoy (Strider MCP), Marriott AI, and Google Hotels. Flight search via Google Flights
   (fli library). Uses Sift for destination research and optionally GoPlaces for location
-  enrichment. Trigger phrases: ''plan a trip'', ''build itinerary'', ''where to stay'',
-  ''find hotels in'', ''Marriott near'', ''compare lodging'', ''restaurant recommendations
-  for my trip'', ''travel to'', ''optimize my itinerary'', ''update voyage'', ''find
-  flights'', ''cheapest flights to'', ''flight prices'', ''fly from'', ''airfare to'',
-  ''best time to fly''. Do not use for generic travel inspiration, visa advice, or
-  points-only optimization.
-
-  '
+  enrichment. Trigger phrases: 'plan a trip', 'build itinerary', 'where to stay',
+  'find hotels in', 'Marriott near', 'compare lodging', 'restaurant recommendations
+  for my trip', 'travel to', 'optimize my itinerary', 'update voyage', 'find flights',
+  'cheapest flights to', 'flight prices', 'fly from', 'airfare to', 'best time to
+  fly'. NOT for generic travel inspiration, visa advice, or points-only optimization.
 license: MIT
+source: https://github.com/indigokarasu/voyage
+includes:
+  - references/**
+
 metadata:
   author: Indigo Karasu
   version: 2.8.0
 ---
+## When to Use
+
+- Travel planning and itinerary construction
+- Flight, hotel, and activity research
+- Booking coordination across multiple providers
+- Travel document and requirement checking
+- When any skill needs travel-related data
+- Plan a multi-day trip with itinerary; build or optimize a travel itinerary
+- Search for flights (one-way, round-trip, multi-city); find cheapest dates to fly
+- Recommend lodging, restaurants, or activities for a trip
+- Manage reservation planning and checklists
+
+## When NOT to Use
+
+- Calendar management (use Sands)
+- Restaurant reservations (use Spot)
+- General web research (use Sift)
+- Travel insurance or financial planning
+- Generic travel inspiration with no planning intent
+- Points-only optimization (use Rally)
+- Visa, customs, or medical-travel compliance as primary task
 
 # Voyage
 
 Voyage builds complete, constraint-aware travel itineraries — taking a destination, dates, budget, dietary preferences, and pace, then assembling lodging, dining, and activity recommendations into a logistics-optimized plan that is ready for reservation without auto-booking anything. It never presents uncertain operating hours or availability as confirmed fact, and surfaces cost implications throughout so the plan remains honest about what it actually knows.
-
-
-## When to use
-
-- Plan a multi-day trip with itinerary
-- Build or optimize a travel itinerary
-- Recommend lodging, restaurants, or activities for a trip
-- Search for flights (one-way, round-trip, multi-city)
-- Find cheapest dates to fly for a trip
-- Manage reservation planning and checklists
-- Optimize an existing itinerary for feasibility
-
-
-## When not to use
-
-- Generic travel inspiration with no planning intent
-- Points-only optimization (use Rally for mileage runs and award hacking)
-- Visa, customs, or medical-travel compliance as primary task
-- Presenting uncertain availability as confirmed facts
-
 
 ## Responsibility boundary
 
@@ -76,63 +79,7 @@ See `references/lodging-sources.md` for per-source patterns and failure modes.
 
 When the user needs flight options, Voyage uses the `fli` Python library (installed as `flights` from PyPI) to query Google Flights data directly. No API key or browser required.
 
-**Execution:** All flight searches run via `execute_code` or `terminal()` using the Hermes venv Python:
-```bash
-/usr/local/lib/hermes-agent/venv/bin/python3 -c "..."
-```
-
-### Capabilities
-
-| Search Type | Description |
-|---|---|
-| **One-way** | Single origin → destination on a specific date |
-| **Round-trip** | Outbound + return with separate date control |
-| **Multi-city** | Multiple legs with distinct city pairs (may time out for very complex routes) |
-| **Date search** | Find cheapest dates across a range (up to 61 days per chunk) |
-| **Multi-airport** | Search across multiple origin/destination airports simultaneously |
-
-### Filters available
-
-- Stops: any, non-stop, 1 stop or fewer, 2 stops or fewer
-- Cabin: economy, premium economy, business, first
-- Sort: best, cheapest, departure time, arrival time, duration, emissions
-- Max duration (minutes)
-- Airline filter
-- Bags (checked + carry-on)
-- Price limit
-- Time restrictions (earliest/latest departure/arrival)
-- Emissions filter (less CO2)
-
-### Airport resolution
-
-Use `search_airports()` to resolve city names, IATA codes, or partial matches. Common cities map to multiple airports (e.g., "new york" → JFK, LGA, EWR). Always confirm ambiguous airports with the user before searching.
-
-### Date search for trip planning
-
-When the user has flexible dates, use `SearchDates` to find the cheapest days to fly across a range. This is especially useful for:
-- Suggesting date shifts that save money
-- Comparing weekday vs weekend pricing
-- Finding optimal departure/return combinations
-
-### Presentation rules
-
-- Always show: price, currency, stops, total duration, airline, flight numbers, departure/arrival times (local)
-- For round-trip: show outbound and return separately with combined price
-- For date search: show top 5-10 cheapest dates with prices
-- Sort by price (default) unless user specifies otherwise
-- Include "as of" timestamp — flight prices change frequently
-- Never present flight prices as guaranteed or fixed
-- Flag when results are limited (e.g., "showing top 5 of 50+ results")
-
-### Failure modes
-
-See `references/flights.md` for detailed failure modes and troubleshooting.
-
-Common issues:
-- **No results**: Try nearby airports, broaden date range, or relax filters
-- **Timeout on multi-city**: Search legs individually and combine
-- **Airport not found**: Ask user for IATA code or clarify city name
-- **Library not installed**: `pip install flights` in the Hermes venv
+See `references/flight-search.md` for capabilities, filters, airport resolution, date search, presentation rules, and failure modes.
 
 
 ## Ontology types
@@ -175,67 +122,24 @@ After every Voyage command:
 - Budget awareness throughout — surface cost implications
 - Reservation-ready means actionable, not auto-booked (unless explicitly enabled)
 
+## Error Handling
+
+| Failure | Detection | Response |
+|---------|-----------|----------|
+| Lodging source unavailable | API timeout or error from Expedia/Marriott/Google | Skip source; continue with remaining sources; log warning |
+| Flight search failure | fli library raises exception or returns empty | Report error; suggest manual Google Flights check |
+| Docker unavailable (Inception) | Docker daemon not running | Log `degraded: docker`; return error with diagnostic info |
+| GoPlaces unavailable | Skill registry check fails | Surface location ambiguity to user; do not guess |
+| Google Places API unavailable | API key missing or quota exceeded | Surface warning; ask for manual estimate |
+
 
 ## Storage layout
 
-```
-{agent_root}/commons/data/ocas-voyage/
-  config.json
-  state.json
-  events.jsonl
-  decisions.jsonl
-  plans/
-
-{agent_root}/commons/journals/ocas-voyage/
-  YYYY-MM-DD/
-    {run_id}.json
-```
-
-
-Default config.json:
-```json
-{
-  "skill_id": "ocas-voyage",
-  "skill_version": "2.3.0",
-  "config_version": "1",
-  "created_at": "",
-  "updated_at": "",
-  "defaults": {
-    "diet": "vegetarian",
-    "pace": "moderate",
-    "auto_book": false
-  },
-  "retention": {
-    "days": 0,
-    "max_records": 10000
-  }
-}
-```
-
+See `references/storage-and-config.md` for the directory structure and default config.json.
 
 ## OKRs
 
-Universal OKRs from spec-ocas-journal.md apply to all runs.
-
-```yaml
-skill_okrs:
-  - name: itinerary_feasibility
-    metric: fraction of itinerary days passing logistics feasibility checks
-    direction: maximize
-    target: 0.95
-    evaluation_window: 30_runs
-  - name: constraint_compliance
-    metric: fraction of recommendations satisfying all stated constraints
-    direction: maximize
-    target: 1.0
-    evaluation_window: 30_runs
-  - name: availability_honesty
-    metric: fraction of uncertain availability items flagged appropriately
-    direction: maximize
-    target: 1.0
-    evaluation_window: 30_runs
-```
-
+See `references/okrs.md`.
 
 ## Optional skill cooperation
 
@@ -264,41 +168,7 @@ Each entity observation must include a `user_relevance` field:
 
 ## Initialization
 
-On first invocation of any Voyage command, run `voyage.init`:
-
-1. Create `{agent_root}/commons/data/ocas-voyage/` and subdirectories (`plans/`, `itineraries/`)
-2. Write default `config.json` and `state.json` if absent
-3. Create empty JSONL files: `events.jsonl`, `decisions.jsonl`
-4. Create `{agent_root}/commons/journals/ocas-voyage/`
-5. Register cron job `voyage:update` if not already present (check the platform scheduling registry first)
-6. Log initialization as a DecisionRecord in `decisions.jsonl`
-7. **Marriott Strider MCP setup** (run once; skip if `mcp-marriott` already in MCP config):
-   ```bash
-   npm install -g @striderlabs/mcp-marriott
-   ```
-   Add to platform MCP config:
-   ```json
-   {
-     "mcpServers": {
-       "marriott": {
-         "command": "mcp-marriott"
-       }
-     }
-   }
-   ```
-   Run OAuth login: `marriott.mobile_key` — opens browser for Bonvoy account login. Re-run if session expires.
-8. **Google Hotels setup**: Google Hotels search requires web browsing access. If the system provides web browsing capability, this is available automatically. If unavailable, Expedia and Marriott cover this path.
-9. **Flights library setup**: The `flights` Python package must be installed in the Hermes venv:
-   ```bash
-   /usr/local/lib/hermes-agent/venv/bin/python3 -m pip install flights
-   ```
-   Verify with: `/usr/local/lib/hermes-agent/venv/bin/python3 -c "from fli.search.flights import SearchFlights; print('OK')"`
-   Record result in config: `"flights_available": true/false`
-10. **Optional credentials** (skip if not available):
-    - `FLYAI_API_KEY` — set for enhanced Marriott AI results; skill works without it
-11. **GoPlaces check**:
-    - Run: `platform skill registry query | grep goplaces`
-    - Record result in `{agent_root}/commons/data/ocas-voyage/config.json` under `"goplaces_available": true/false`
+On first invocation of any Voyage command, run `voyage.init`. See `references/initialization.md` for the full 10-step procedure including Marriott MCP setup, Google Hotels setup, flights library install, optional credentials, and GoPlaces check.
 
 ## Background tasks
 
@@ -313,23 +183,7 @@ On first invocation of any Voyage command, run `voyage.init`:
 
 ## Self-update
 
-`voyage.update` pulls the latest package from the `source:` URL in this file's frontmatter. Runs silently — no output unless the version changed or an error occurred.
-
-1. Read `source:` from frontmatter → extract `{owner}/{repo}` from URL
-2. Read local version from SKILL.md frontmatter `metadata.version`
-3. Fetch remote version from SKILL.md frontmatter: `gh api "repos/{owner}/{repo}/contents/SKILL.md" --jq '.content' | base64 -d | grep 'version:' | head -1 | sed 's/.*"\(.*\)".*/\1/'`
-4. If remote version equals local version → stop silently
-5. Download and install:
-   ```bash
-   TMPDIR=$(mktemp -d)
-   gh api "repos/{owner}/{repo}/tarball/main" > "$TMPDIR/archive.tar.gz"
-   mkdir "$TMPDIR/extracted"
-   tar xzf "$TMPDIR/archive.tar.gz" -C "$TMPDIR/extracted" --strip-components=1
-   cp -R "$TMPDIR/extracted/"* ./
-   rm -rf "$TMPDIR"
-   ```
-6. On failure → retry once. If second attempt fails, report the error and stop.
-7. Output exactly: `I updated Voyage from version {old} to {new}`
+`voyage.update` pulls the latest package from the `source:` URL in frontmatter. Runs silently — no output unless the version changed or an error occurred. See `references/self-update.md` for the full 7-step procedure.
 
 
 ## Visibility
@@ -345,7 +199,7 @@ public
 - **Multi-city searches may time out** — For complex multi-leg itineraries, search legs individually and combine results rather than using a single multi-city query.
 - **Reference files are authoritative over SKILL.md** — If a concept is described in both SKILL.md and a reference file, the reference file wins. Always read the relevant reference before executing a workflow.
 
-## Support file map
+## Support File Map
 
 | File | When to read |
 |------|-------------|
@@ -355,6 +209,11 @@ public
 | `references/journal.md` | Before calling voyage.journal; at end of every run |
 | `references/flights.md` | Before any flight search; when checking API patterns, airport resolution, or failure modes |
 | `references/lodging-sources.md` | Before lodging search; when checking per-source patterns and failure modes |
+| `references/flight-search.md` | Before any flight search; capabilities, filters, airport resolution, date search, presentation rules |
+| `references/storage-and-config.md` | When inspecting or configuring the on-disk data files and default config |
+| `references/okrs.md` | When reviewing OKR definitions or scoring skill performance |
+| `references/initialization.md` | On first use; Marriott MCP setup, flights library install, GoPlaces check |
+| `references/self-update.md` | When running voyage.update; full 7-step update procedure |
 
 ## Update command
 
