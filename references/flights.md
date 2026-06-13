@@ -191,6 +191,11 @@ Or use the venv Python directly via `terminal()`:
 | Airport not found | `search_airports()` returns empty | Ask user for IATA code or city name clarification |
 | Past date | `ValueError: Travel date cannot be in the past` | Use today or future dates only |
 | pydantic_core error | `ModuleNotFoundError: pydantic_core._pydantic_core` | Reinstall in correct venv: `/usr/local/lib/hermes-agent/venv/bin/python3 -m pip install flights` |
+| Direct API: `SortBy.PRICE` AttributeError | `SortBy` has no `PRICE` member | Use `SortBy.CHEAPEST` instead |
+| Direct API: `SearchFlights(__init__)` TypeError | `got unexpected keyword argument 'flight_search_filters'` | `SearchFlights()` takes no args; call `sf.search(filters, top_n=N)` on instance |
+| Direct API: `list index out of range` in format | Airport nesting wrong in `FlightSegment` | Use `departure_airport=[[origin, origin]]` (2-element inner list), NOT `[[[origin]]]` (3-level) |
+| Direct API: `'FlightResult' has no attribute 'segments'` | Wrong attribute name | Use `fr.legs` not `fr.segments` |
+| 4 validation errors for `FlightSegment` | Airport passed as nested list instead of Airport enum | Ensure `Airport.SFO` enum value is used, not string "SFO"; pydantic validates `[[origin, origin]]` as list Airport |
 
 ## Integration with Voyage Workflow
 

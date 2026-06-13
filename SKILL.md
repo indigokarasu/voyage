@@ -1,24 +1,30 @@
 ---
 name: ocas-voyage
-description: >
-  Voyage: travel planning, itinerary construction, reservation management,
-  lodging search, and flight search. Parallel lodging search across Expedia, Marriott
-  Bonvoy (Strider MCP), Marriott AI, and Google Hotels. Flight search via Google Flights
-  (fli library). Uses Sift for destination research and optionally GoPlaces for location
-  enrichment. Trigger phrases: 'plan a trip', 'build itinerary', 'where to stay',
-  'find hotels in', 'Marriott near', 'compare lodging', 'restaurant recommendations
-  for my trip', 'travel to', 'optimize my itinerary', 'update voyage', 'find flights',
-  'cheapest flights to', 'flight prices', 'fly from', 'airfare to', 'best time to
-  fly'. NOT for generic travel inspiration, visa advice, or points-only optimization.
+description: 'Travel planning, itinerary construction, reservation management, lodging search, and flight search. Parallel lodging search across Expedia, Marriott Bonvoy, Marriott AI, Google Hotels, and 1Stay. Flight search via Google Flights. Uses Sift for destination research and optionally GoPlaces for location enrichment. NOT for generic travel inspiration, visa advice, or points-only optimization.'
 license: MIT
 source: https://github.com/indigokarasu/voyage
 includes:
-  - references/**
-
+- references/**
 metadata:
-  author: Indigo Karasu
-  version: 2.8.0
+  author: Indigo Karasu (indigokarasu)
+  version: 2.9.0
+tags:
+- travel
+- itinerary
+- flights
+- hotels
+- booking
+triggers:
+- travel planning
+- itinerary construction
+- flight search
+- hotel booking
+- travel reservation
 ---
+## Interactive Menu
+
+When invoked interactively, present a two-level menu. See `references/interactive-menu.md` for the full menu structure.
+
 ## When to Use
 
 - Travel planning and itinerary construction
@@ -62,6 +68,7 @@ When the user needs lodging recommendations, all configured sources fire in para
 | **Marriott Strider MCP** | Real Bonvoy inventory, award nights, elite upgrades, mobile key | `mcp-marriott` installed + Bonvoy OAuth login |
 | **Marriott AI / FlyAI** | Package bundling, real-time pricing, POI enrichment | None; `FLYAI_API_KEY` optional for enhanced results |
 | **Google Hotels** | Structured results table (price/rating/amenities), search-only | `agent-browser` CLI |
+| **1Stay** | Real hotel booking with confirmation numbers, loyalty program eligible, 300K+ properties in 140+ countries | MCP connector `1stay` configured (Streamable HTTP) |
 | **Sift** | Destination info, activities, local knowledge, anything platforms don't cover | Sift skill installed |
 
 Results ranked by: total real cost → loyalty/points value → cancellation flexibility → location fit.
@@ -77,9 +84,15 @@ See `references/lodging-sources.md` for per-source patterns and failure modes.
 
 ## Flight search
 
-When the user needs flight options, Voyage uses the `fli` Python library (installed as `flights` from PyPI) to query Google Flights data directly. No API key or browser required.
+When the user needs flight options, Voyage uses the `fli` library to query Google Flights data directly. No API key or browser required.
 
-See `references/flight-search.md` for capabilities, filters, airport resolution, date search, presentation rules, and failure modes.
+For quick searches, use the bundled script:
+```bash
+/usr/local/lib/hermes-agent/venv/bin/python3 ~/.hermes/skills/ocas-voyage/scripts/flight_search.py SFO JFK 2026-06-16
+/usr/local/lib/hermes-agent/venv/bin/python3 ~/.hermes/skills/ocas-voyage/scripts/flight_search.py SFO LGA 2026-06-16 SFO 2026-06-18 --limit 5
+```
+
+See `references/flight-search.md` for the full fli API calling convention (including common pitfalls) and `references/flights.md` for date search, multi-airport, and multi-city patterns.
 
 
 ## Ontology types
@@ -97,7 +110,7 @@ Voyage maintains its own trip and itinerary state in `{agent_root}/commons/data/
 ## Commands
 
 - `voyage.plan.trip` — create a full trip plan from destination, dates, and constraints
-- `voyage.recommend.lodging` — parallel lodging search across Expedia, Marriott Strider, Marriott AI, and Google Hotels. Returns unified comparison table with total-cost breakdown and booking-gate summary.
+- `voyage.recommend.lodging` — parallel lodging search across Expedia, Marriott Strider, Marriott AI, Google Hotels, and 1Stay. Returns unified comparison table with total-cost breakdown and booking-gate summary.
 - `voyage.recommend.flights` — search Google Flights for one-way, round-trip, multi-city, or date-range queries. Returns structured flight options with pricing, timing, and airline details.
 - `voyage.recommend.food` — restaurant recommendations based on route and preferences
 - `voyage.recommend.activities` — activity recommendations based on interests and logistics
@@ -209,11 +222,12 @@ public
 | `references/journal.md` | Before calling voyage.journal; at end of every run |
 | `references/flights.md` | Before any flight search; when checking API patterns, airport resolution, or failure modes |
 | `references/lodging-sources.md` | Before lodging search; when checking per-source patterns and failure modes |
-| `references/flight-search.md` | Before any flight search; capabilities, filters, airport resolution, date search, presentation rules |
+| `references/flight-search.md` | Before any flight search; when checking API patterns, airport resolution, or failure modes |
 | `references/storage-and-config.md` | When inspecting or configuring the on-disk data files and default config |
 | `references/okrs.md` | When reviewing OKR definitions or scoring skill performance |
 | `references/initialization.md` | On first use; Marriott MCP setup, flights library install, GoPlaces check |
 | `references/self-update.md` | When running voyage.update; full 7-step update procedure |
+| `scripts/flight_search.py` | Reusable flight search script; call via venv Python for quick one-off searches |
 
 ## Update command
 

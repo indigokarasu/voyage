@@ -7,6 +7,54 @@ All flight searches run via `execute_code` or `terminal()` using the Hermes venv
 /usr/local/lib/hermes-agent/venv/bin/python3 -c "..."
 ```
 
+## fli Library API (v0.x) — Actual Calling Convention
+
+**IMPORTANT**: The fli library API differs from initial assumptions. Use this exact pattern:
+
+```python
+from fli.search import SearchFlights
+from fli.models import (
+    Airport, FlightSearchFilters, FlightSegment, PassengerInfo,
+    MaxStops, SortBy, TripType, SeatType
+)
+
+def search_route(origin, dest, date, limit=5):
+    filters = FlightSearchFilters(
+        trip_type=TripType.ONE_WAY,
+        passenger_info=PassengerInfo(adults=1),  # REQUIRED
+        flight_segments=[
+            FlightSegment(
+                departure_airport=[[origin, origin]],  # 2-element list per option
+                arrival_airport=[[dest, dest]],         # NOT 3-level nested
+                travel_date=date,                       # "YYYY-MM-DD" string
+            )
+        ],
+        stops=MaxStops.ANY,
+        sort_by=SortBy.CHEAPEST,  # NOT SortBy.PRICE (doesn't exist)
+        seat_type=SeatType.ECONOMY,
+    )
+    sf = SearchFlights()  # No init args
+    results = sf.search(filters, top_n=limit)  # Returns list of FlightResult
+    
+    for fr in results[:limit]:
+        leg = fr.legs[0]          # Attribute is .legs, NOT .segments
+        print(f"{leg.airline} {leg.flight_number}: ${fr.price}, {fr.stops} stops, {fr.duration}min")
+```
+
+**Key API Details:**
+- `Airport` is an enum: `Airport.SFO`, `Airport.JFK`, `Airport.LGA`, `Airport.EWR`, `Airport.IAD`, `Airport.DCA`, `Airport.BWI`
+- `SearchFlights()` takes NO constructor arguments
+- Call `sf.search(filters, top_n=N)` to execute
+- `SortBy` enum values: `TOP_FLIGHTS`, `BEST`, `CHEAPEST`, `DEPARTURE_TIME`, `ARRIVAL_TIME`, `DURATION`, `EMISSIONS`
+- `FlightResult` attributes: `.legs` (list of FlightLeg), `.price` (float), `.currency`, `.duration` (int minutes), `.stops` (int)
+- `FlightLeg` attributes: `.airline`, `.flight_number`, `.departure`, `.arrival`
+
+**Common Pitfalls (learned from usage):**
+- `SortBy.PRICE` doesn't exist → use `SortBy.CHEAPEST`
+- `SearchFlights(flight_search_filters=...)` doesn't work → construct `SearchFlights()` then call `.search(filters)`
+- `FlightSegment(departure_airport=[[[Airport.SFO]]])` (3-level nesting) fails validation → use `[[origin, origin]]` (2-element inner list)
+- `fr.segments` doesn't exist → use `fr.legs`
+
 ## Capabilities
 
 | Search Type | Description |

@@ -33,6 +33,31 @@ Run OAuth login: `marriott.mobile_key` — opens browser for Bonvoy account logi
 
 Google Hotels search requires web browsing access. If the system provides web browsing capability, this is available automatically. If unavailable, Expedia and Marriott cover this path.
 
+## 1Stay MCP Setup (optional)
+
+1Stay provides real hotel booking with confirmation numbers via MCP. Add to Hermes MCP config:
+
+```json
+{
+  "mcpServers": {
+    "1stay": {
+      "url": "https://mcp.stayker.com/mcp"
+    }
+  }
+}
+```
+
+Or via CLI:
+```bash
+hermes mcp add 1stay --transport http https://mcp.stayker.com/mcp
+```
+
+No credentials required for search. Booking requires a 1Stay account (OAuth 2.0 handled by the MCP client). Restart the gateway after adding.
+
+Record result in config: `"1stay_available": true/false`
+
+**Note:** As of 2026-06-05 the endpoint reports Unhealthy status — may be intermittently unavailable.
+
 ## Flights Library Setup
 
 The `flights` Python package must be installed in the Hermes venv:
