@@ -1,13 +1,18 @@
 ---
-name: ocas-voyage
-description: 'Travel planning, itinerary construction, reservation management, lodging search, and flight search. Parallel lodging search across Expedia, Marriott Bonvoy, Marriott AI, Google Hotels, and 1Stay. Flight search via Google Flights. Uses Sift for destination research and optionally GoPlaces for location enrichment. NOT for generic travel inspiration, visa advice, or points-only optimization.'
-license: MIT
-source: https://github.com/indigokarasu/voyage
+description: Travel planning, itinerary construction, reservation management, lodging
+  search, and flight search. Parallel lodging search across Expedia, Marriott Bonvoy,
+  Marriott AI, Google Hotels, and 1Stay. Flight search via Google Flights. Uses Sift
+  for destination research and optionally GoPlaces for location enrichment. NOT for
+  generic travel inspiration, visa advice, or points-only optimization.
 includes:
 - references/**
+- scripts/**
+license: MIT
 metadata:
   author: Indigo Karasu (indigokarasu)
   version: 2.9.0
+name: ocas-voyage
+source: https://github.com/indigokarasu/voyage
 tags:
 - travel
 - itinerary
