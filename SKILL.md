@@ -60,7 +60,7 @@ Voyage builds complete, constraint-aware travel itineraries — taking a destina
 
 Voyage owns travel planning, itinerary construction, and reservation management.
 
-Voyage does not own: web research (Sift), preference persistence (Taste), knowledge graph (Elephas), communications (Dispatch).
+Voyage does not own: web research (Sift), preference persistence (Taste), communications (Dispatch).
 
 
 ## Lodging search
@@ -125,6 +125,17 @@ Voyage maintains its own trip and itinerary state in `{agent_root}/commons/data/
 - `voyage.update` — pull latest from GitHub source; preserves journals and data
 
 
+## Workflow
+
+The Voyage pipeline follows: **research → search → compare → recommend → persist**.
+
+1. Research destination via Sift (example: "best neighborhoods in Lisbon for food lovers")
+2. Search lodging in parallel across all providers
+3. Search flights via Google Flights
+4. Compare options with total-cost breakdown
+5. Recommend with evidence-linked rationale (because each recommendation names the specific attributes that justify it)
+6. Persist plan state and write journal
+
 ## Run completion
 
 After every Voyage command:
@@ -165,7 +176,7 @@ See `references/okrs.md`.
 - **GoPlaces** (`ocas-goplaces`) — location enrichment: geocoding, distance-to-airport/center, neighborhood context, disambiguation of ambiguous location input. Check at runtime: `platform skill registry query | grep goplaces`. If not installed, flag ambiguity to user.
 - **Taste** — preference-aware recommendations (read-only)
 - **Weave** — trip companion context from social graph (read-only)
-- **Elephas** — entity observations emitted via journal
+- **Chronicle** — entity observations emitted via journal signal payloads
 
 
 ## Journal outputs
@@ -242,4 +253,4 @@ This skill self-updates every 24 hours via:
 voyage.update
 ```
 
-This pulls the latest version from GitHub and restarts the skill's background tasks if applicable.
+This pulls the latest version from GitHub. Voyage has no background operational tasks, so there is nothing to restart.
