@@ -1,7 +1,7 @@
 # voyage
 
 <p align="center">
-<img src="./assets/readme/hero.svg" width="100%" alt="Voyage: travel planning and itinerary construction — books flights, hotels, and manages trip logistics.">
+<img src="./assets/readme/hero.jpg" width="100%" alt="Voyage: travel planning and itinerary construction — books flights, hotels, and manages trip logistics.">
 </p>
 
 voyage — Voyage: travel planning and itinerary construction — books flights, hotels, and manages trip logistics.
