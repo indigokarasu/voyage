@@ -8,7 +8,7 @@ Travel planning, itinerary construction, reservation management, lodging
 **Version:** 2.9.0
 **Type:** 
 **Layer:** Execution
-**Author:** Indigo Karasu
+**Author:** <agent-name>
 
 ---
 
