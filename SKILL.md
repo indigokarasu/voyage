@@ -1,9 +1,11 @@
 ---
 description: Travel planning, itinerary construction, reservation management, lodging
   search, and flight search. Parallel lodging search across Expedia, Marriott Bonvoy,
-  Marriott AI, Google Hotels, and 1Stay. Flight search via Google Flights. Uses Sift
-  for destination research and optionally GoPlaces for location enrichment. NOT for
-  generic travel inspiration, visa advice, or points-only optimization.
+  Marriott AI, Google Hotels, 1Stay, and HotelsByDay (day-use rooms). Flight search
+  via Google Flights. Uses Sift for destination research and optionally GoPlaces for
+  location enrichment. HotelOracle (Google Hotels) used for price trends, area guides,
+  and price comparison research. NOT for generic travel inspiration, visa advice, or
+  points-only optimization.
 includes:
 - references/**
 - scripts/**
@@ -73,7 +75,10 @@ When the user needs lodging recommendations, all configured sources fire in para
 | **Marriott Strider MCP** | Real Bonvoy inventory, award nights, elite upgrades, mobile key | `mcp-marriott` installed + Bonvoy OAuth login |
 | **Marriott AI / FlyAI** | Package bundling, real-time pricing, POI enrichment | None; `FLYAI_API_KEY` optional for enhanced results |
 | **Google Hotels** | Structured results table (price/rating/amenities), search-only | `agent-browser` CLI |
-| **1Stay** | Real hotel booking with confirmation numbers, loyalty program eligible, 300K+ properties in 140+ countries | MCP connector `1stay` configured (Streamable HTTP) |
+| **1Stay** | Real hotel booking with confirmation numbers, loyalty program eligible, 300K+ properties in 140+ countries. Full lifecycle: search → details → book → lookup/cancel | MCP connector `1stay` configured (Streamable HTTP) + Bearer API key for booking |
+| **HotelOracle** | Price trends (calendar), area guides, cross-site price comparison, nearby attractions — research enrichment only, no booking | Glama MCP Gateway configured for `io.tooloracle/hoteloracle` |
+| **HotelsByDay** | Day-use rooms (10AM–5PM) and work passes — unique vertical not on other platforms. Python harness: `scripts/hotelsbyday_search.py`. Also night stays (beta, limited inventory) | No credentials required; uses web harness |
+| **LetsFG** | Flight + hotel search with real booking (real PNR / confirmation); free-cancellation pay-later hotel rates, 5%-now/rest-to-hotel | `letsfg auth` card-on-file token (nothing charged); see `references/letsfg.md` |
 | **Sift** | Destination info, activities, local knowledge, anything platforms don't cover | Sift skill installed |
 
 Results ranked by: total real cost → loyalty/points value → cancellation flexibility → location fit.
@@ -90,6 +95,8 @@ See `references/lodging-sources.md` for per-source patterns and failure modes.
 ## Flight search
 
 When the user needs flight options, Voyage uses the `fli` library to query Google Flights data directly. No API key or browser required.
+
+**LetsFG (booking-capable complement):** For the broadest price scan (budget carriers, OTAs, stable repeat pricing) and actual booking without OTA checkout redirects — flights and free-cancellation pay-later hotels — use LetsFG (`pip install letsfg`, one-time `letsfg auth` card-on-file setup, nothing charged; NEVER use `letsfg register`/`setup-payment`, those create a paid Developer API billing account). Hotel bookings carry a 5% non-refundable reservation fee. Run `fli` first (no credentials); add LetsFG results when a token exists or the task involves booking. See `references/letsfg.md`.
 
 For quick searches, use the bundled script:
 ```bash
@@ -115,7 +122,7 @@ Voyage maintains its own trip and itinerary state in `{agent_root}/commons/data/
 ## Commands
 
 - `voyage.plan.trip` — create a full trip plan from destination, dates, and constraints
-- `voyage.recommend.lodging` — parallel lodging search across Expedia, Marriott Strider, Marriott AI, Google Hotels, and 1Stay. Returns unified comparison table with total-cost breakdown and booking-gate summary.
+- `voyage.recommend.lodging` — parallel lodging search across Expedia, Marriott Strider, Marriott AI, Google Hotels, 1Stay, and HotelsByDay (day-use rooms). HotelOracle used for price calendar and cross-site comparison research. Returns unified comparison table with total-cost breakdown and booking-gate summary.
 - `voyage.recommend.flights` — search Google Flights for one-way, round-trip, multi-city, or date-range queries. Returns structured flight options with pricing, timing, and airline details.
 - `voyage.recommend.food` — restaurant recommendations based on route and preferences
 - `voyage.recommend.activities` — activity recommendations based on interests and logistics
@@ -130,7 +137,7 @@ Voyage maintains its own trip and itinerary state in `{agent_root}/commons/data/
 The Voyage pipeline follows: **research → search → compare → recommend → persist**.
 
 1. Research destination via Sift (example: "best neighborhoods in Lisbon for food lovers")
-2. Search lodging in parallel across all providers
+2. Search lodging in parallel across all providers; HotelsByDay covers day-use rooms (10AM–5PM), HotelOracle enriches with price calendars and cross-site comparison where available, 1Stay provides booking
 3. Search flights via Google Flights
 4. Compare options with total-cost breakdown
 5. Recommend with evidence-linked rationale (because each recommendation names the specific attributes that justify it)
@@ -155,7 +162,7 @@ After every Voyage command:
 
 | Failure | Detection | Response |
 |---------|-----------|----------|
-| Lodging source unavailable | API timeout or error from Expedia/Marriott/Google | Skip source; continue with remaining sources; log warning |
+| Lodging source unavailable | API timeout or error from any MCP/lodging source | Skip source; continue with remaining sources; log warning |
 | Flight search failure | fli library raises exception or returns empty | Report error; suggest manual Google Flights check |
 | Docker unavailable (Inception) | Docker daemon not running | Log `degraded: docker`; return error with diagnostic info |
 | GoPlaces unavailable | Skill registry check fails | Surface location ambiguity to user; do not guess |
@@ -174,6 +181,7 @@ See `references/okrs.md`.
 
 - **Sift** — all open web research: destination info, restaurant picks, activity recommendations, local knowledge. Voyage delegates to Sift via Sift's search stack; does not do raw web searches itself.
 - **GoPlaces** (`ocas-goplaces`) — location enrichment: geocoding, distance-to-airport/center, neighborhood context, disambiguation of ambiguous location input. Check at runtime: `platform skill registry query | grep goplaces`. If not installed, flag ambiguity to user.
+- **HotelOracle** (`io.tooloracle/hoteloracle` via Glama MCP Gateway) — price calendar trends, cross-site price comparison, area guides, nearby attractions. Research-only; no booking capability. Enriches hotel details with Google Hotels data.
 - **Taste** — preference-aware recommendations (read-only)
 - **Weave** — trip companion context from social graph (read-only)
 - **Chronicle** — entity observations emitted via journal signal payloads
@@ -237,12 +245,14 @@ public
 | `references/recommendation_style.md` | Before generating recommendations; when checking tone and format guidelines |
 | `references/journal.md` | Before calling voyage.journal; at end of every run |
 | `references/flights.md` | Before any flight search; when checking API patterns, airport resolution, or failure modes |
+| `references/letsfg.md` | Before using LetsFG for flight/hotel search or booking; auth setup, guardrails, SDK patterns |
 | `references/lodging-sources.md` | Before lodging search; when checking per-source patterns and failure modes |
 | `references/flight-search.md` | Before any flight search; when checking API patterns, airport resolution, or failure modes |
 | `references/storage-and-config.md` | When inspecting or configuring the on-disk data files and default config |
 | `references/okrs.md` | When reviewing OKR definitions or scoring skill performance |
 | `references/initialization.md` | On first use; Marriott MCP setup, flights library install, GoPlaces check |
 | `references/self-update.md` | When running voyage.update; full 7-step update procedure |
+| `scripts/hotelsbyday_search.py` | Bundled HotelsByDay harness for day-use rooms and night stays; call via venv Python for quick searches |
 | `scripts/flight_search.py` | Reusable flight search script; call via venv Python for quick one-off searches |
 
 ## Update command
