@@ -62,10 +62,10 @@ Record result in config: `"1stay_available": true/false`
 
 The `flights` Python package must be installed in the Hermes venv:
 ```bash
-/usr/local/lib/hermes-agent/venv/bin/python3 -m pip install flights
+$HERMES_PY -m pip install flights
 ```
 
-Verify with: `/usr/local/lib/hermes-agent/venv/bin/python3 -c "from fli.search.flights import SearchFlights; print('OK')"`
+Verify with: `$HERMES_PY -c "from fli.search.flights import SearchFlights; print('OK')"`
 
 Record result in config: `"flights_available": true/false`
 

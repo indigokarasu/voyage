@@ -72,11 +72,11 @@ When the user needs lodging recommendations, all configured sources fire in para
 | Source | Provides | Requires |
 |--------|----------|----------|
 | **Expedia web** | Hotel/package search, total-cost breakdown | None — always available |
-| **Marriott Strider MCP** | Real Bonvoy inventory, award nights, elite upgrades, mobile key | `mcp-marriott` installed + Bonvoy OAuth login |
-| **Marriott AI / FlyAI** | Package bundling, real-time pricing, POI enrichment | None; `FLYAI_API_KEY` optional for enhanced results |
+| **Marriott Strider MCP** | Real Bonvoy inventory, award nights, elite upgrades, mobile key | `mcp-marriott` installed + configured (profile `marriott` MCP server) + Bonvoy OAuth login (`login` tool or MARRIOTT_EMAIL/MARRIOTT_PASSWORD env) |
+| **Marriott AI / FlyAI** | ~~Package bundling~~ **DEAD (2026-08-23, DNS NXDOMAIN) — do not use** | — |
 | **Google Hotels** | Structured results table (price/rating/amenities), search-only | `agent-browser` CLI |
 | **1Stay** | Real hotel booking with confirmation numbers, loyalty program eligible, 300K+ properties in 140+ countries. Full lifecycle: search → details → book → lookup/cancel | MCP connector `1stay` configured (Streamable HTTP) + Bearer API key for booking |
-| **HotelOracle** | Price trends (calendar), area guides, cross-site price comparison, nearby attractions — research enrichment only, no booking | Glama MCP Gateway configured for `io.tooloracle/hoteloracle` |
+| **HotelOracle** | Price trends (calendar), area guides, cross-site price comparison, nearby attractions — research enrichment only, no booking | Direct Streamable HTTP: `https://tooloracle.io/hotel/mcp/` (free tier, no key); configured as profile `hoteloracle` MCP server |
 | **HotelsByDay** | Day-use rooms (10AM–5PM) and work passes — unique vertical not on other platforms. Python harness: `scripts/hotelsbyday_search.py`. Also night stays (beta, limited inventory) | No credentials required; uses web harness |
 | **LetsFG** | Flight + hotel search with real booking (real PNR / confirmation); free-cancellation pay-later hotel rates, 5%-now/rest-to-hotel | `letsfg auth` card-on-file token (nothing charged); see `references/letsfg.md` |
 | **Sift** | Destination info, activities, local knowledge, anything platforms don't cover | Sift skill installed |
@@ -100,8 +100,8 @@ When the user needs flight options, Voyage uses the `fli` library to query Googl
 
 For quick searches, use the bundled script:
 ```bash
-/usr/local/lib/hermes-agent/venv/bin/python3 ~/.hermes/skills/ocas-voyage/scripts/flight_search.py SFO JFK 2026-06-16
-/usr/local/lib/hermes-agent/venv/bin/python3 ~/.hermes/skills/ocas-voyage/scripts/flight_search.py SFO LGA 2026-06-16 SFO 2026-06-18 --limit 5
+$HERMES_PY ~/.hermes/skills/ocas-voyage/scripts/flight_search.py SFO JFK 2026-06-16
+$HERMES_PY ~/.hermes/skills/ocas-voyage/scripts/flight_search.py SFO LGA 2026-06-16 SFO 2026-06-18 --limit 5
 ```
 
 See `references/flight-search.md` for the full fli API calling convention (including common pitfalls) and `references/flights.md` for date search, multi-airport, and multi-city patterns.
@@ -235,6 +235,7 @@ public
 - **Flight prices are volatile** — Always include an "as of" timestamp in flight search results. Prices change frequently and are never guaranteed. The `fli` library queries Google Flights in real-time.
 - **Multi-city searches may time out** — For complex multi-leg itineraries, search legs individually and combine results rather than using a single multi-city query.
 - **Reference files are authoritative over SKILL.md** — If a concept is described in both SKILL.md and a reference file, the reference file wins. Always read the relevant reference before executing a workflow.
+- **Integration hygiene (operator, 2026-08-22):** after integrating any new service into Voyage, run a rationalization/health scan over ALL integrated APIs and MCPs — verify each is healthy and working, and document what each is used for in the reference files. Fix broken ones rather than leaving them listed.
 
 ## Support File Map
 

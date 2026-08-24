@@ -7,7 +7,7 @@ Voyage uses the `fli` Python library (installed as `flights` from PyPI) to searc
 The `flights` package must be installed in the Hermes agent venv:
 
 ```bash
-/usr/local/lib/hermes-agent/venv/bin/python3 -m pip install flights
+$HERMES_PY -m pip install flights
 ```
 
 **Important:** The system Python (3.13) and the Hermes venv (3.11) are different. Always install into the venv. The package name on PyPI is `flights`; the import name is `fli`.
@@ -172,13 +172,13 @@ All flight searches run via `execute_code` with the Hermes venv Python:
 
 ```python
 import sys
-sys.path.insert(0, "/usr/local/lib/hermes-agent/venv/lib/python3.11/site-packages")
+sys.path.insert(0, "$HERMES_INSTALL/venv/lib/python3.11/site-packages")
 # ... then use fli imports
 ```
 
 Or use the venv Python directly via `terminal()`:
 ```bash
-/usr/local/lib/hermes-agent/venv/bin/python3 -c "..."
+$HERMES_PY -c "..."
 ```
 
 ## Failure Modes
@@ -190,7 +190,7 @@ Or use the venv Python directly via `terminal()`:
 | Rate limit | HTTP 429 | Library auto-retries with backoff; wait and retry |
 | Airport not found | `search_airports()` returns empty | Ask user for IATA code or city name clarification |
 | Past date | `ValueError: Travel date cannot be in the past` | Use today or future dates only |
-| pydantic_core error | `ModuleNotFoundError: pydantic_core._pydantic_core` | Reinstall in correct venv: `/usr/local/lib/hermes-agent/venv/bin/python3 -m pip install flights` |
+| pydantic_core error | `ModuleNotFoundError: pydantic_core._pydantic_core` | Reinstall in correct venv: `$HERMES_PY -m pip install flights` |
 | Direct API: `SortBy.PRICE` AttributeError | `SortBy` has no `PRICE` member | Use `SortBy.CHEAPEST` instead |
 | Direct API: `SearchFlights(__init__)` TypeError | `got unexpected keyword argument 'flight_search_filters'` | `SearchFlights()` takes no args; call `sf.search(filters, top_n=N)` on instance |
 | Direct API: `list index out of range` in format | Airport nesting wrong in `FlightSegment` | Use `departure_airport=[[origin, origin]]` (2-element inner list), NOT `[[[origin]]]` (3-level) |
