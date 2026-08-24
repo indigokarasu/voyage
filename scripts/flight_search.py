@@ -2,8 +2,8 @@
 """flight_search.py — Reusable Google Flights search script using the fli library.
 
 Usage:
-    /usr/local/lib/hermes-agent/venv/bin/python3 flight_search.py SFO JFK 2026-06-16 --limit 5
-    /usr/local/lib/hermes-agent/venv/bin/python3 flight_search.py SFO LGA 2026-06-16 SFO 2026-06-18 --limit 5
+    python3 flight_search.py SFO JFK 2026-06-16 --limit 5
+    python3 flight_search.py SFO LGA 2026-06-16 SFO 2026-06-18 --limit 5
 
 Output: JSON array of flight options.
 

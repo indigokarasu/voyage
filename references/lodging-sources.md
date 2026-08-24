@@ -45,18 +45,10 @@ Failure modes:
 
 ## Marriott AI / FlyAI
 
-No credentials required for basic use. For enhanced results, set the `FLYAI_API_KEY` environment variable (optional).
-
-Key commands:
-- `search-marriott-hotel` — Marriott properties with real-time pricing
-- `search-marriott-package` — bundled deals
-- `search-poi` — points of interest near destination (useful for itinerary enrichment)
-
-Output: single-line JSON; pipe through `jq` for structured display. Present as comparison table.
-
-Failure modes:
-- FlyAI service unavailable — skip, continue with other sources
-- Package savings require date stability — note cancellation risk
+**DEAD (verified 2026-08-23):** all FlyAI domains (flyai.com, api.flyai.com,
+app.flyai.com) fail DNS resolution (NXDOMAIN) — the service has shut down. Do
+not attempt; do not set `FLYAI_API_KEY`. Marriott property search is covered by
+the Strider MCP above; general hotel search by Google Hotels / 1Stay / LetsFG.
 
 ## Google Hotels (agent-browser)
 
@@ -134,7 +126,7 @@ Hotel booking MCP server by Stayker (WPF Holdings, LLC). Completes **real** hote
 
 Hotel Intelligence MCP via Google Hotels — **informational/research only, no booking**. Connects through the Glama MCP Gateway for managed credentials and call logging. Search, price compare, area guides, price calendars, and nearby-attraction data across major booking sites.
 
-**Server:** `io.tooloracle/hoteloracle` (Transport: Streamable HTTP, via Glama MCP Gateway)
+**Server:** `ToolOracle/hoteloracle` — **direct Streamable HTTP endpoint: `https://tooloracle.io/hotel/mcp/`** (verified live 2026-08-23; free tier, 100 calls/day, no key required). Note: the old `io.tooloracle/hoteloracle` Glama path 404s and tooloracle.com is an unrelated content site — use the tooloracle.io endpoint. Configured in profile `config.yaml` as MCP server `hoteloracle`.
 
 **Tools (8):**
 
@@ -177,9 +169,9 @@ Day-use hotel booking platform with a separate overnight product (night.hotelsby
 
 **Harness usage (bundled script):**
 ```bash
-/usr/local/lib/hermes-agent/venv/bin/python3 ~/.hermes/profiles/indigo/skills/ocas-voyage/scripts/hotelsbyday_search.py autocomplete "New York"
-/usr/local/lib/hermes-agent/venv/bin/python3 ~/.hermes/profiles/indigo/skills/ocas-voyage/scripts/hotelsbyday_search.py search "New York" 2026-08-10 2026-08-11 --guests 1 --product day
-/usr/local/lib/hermes-agent/venv/bin/python3 ~/.hermes/profiles/indigo/skills/ocas-voyage/scripts/hotelsbyday_search.py hotel-detail "https://www.hotelsbyday.com/en/hotels/united-states/new-york/m-social-hotel-times-square?date=2026-08-10"
+$HERMES_PY $HERMES_HOME/../indigo/skills/ocas-voyage/scripts/hotelsbyday_search.py autocomplete "New York"
+$HERMES_PY $HERMES_HOME/../indigo/skills/ocas-voyage/scripts/hotelsbyday_search.py search "New York" 2026-08-10 2026-08-11 --guests 1 --product day
+$HERMES_PY $HERMES_HOME/../indigo/skills/ocas-voyage/scripts/hotelsbyday_search.py hotel-detail "https://www.hotelsbyday.com/en/hotels/united-states/new-york/m-social-hotel-times-square?date=2026-08-10"
 ```
 
 **Data extraction patterns:**
@@ -196,6 +188,7 @@ Day-use hotel booking platform with a separate overnight product (night.hotelsby
 **Failure modes:**
 - Autocomplete returns empty — location may need more specificity; suggest narrowing to city or using a known hotel name
 - Search returns 0 hotels — location may not have day-use inventory; try nearby cities or the night product
+- **Silent NY fallback (found 2026-08-23, fixed in harness):** `/en/search/results` returns default New York hotels when it can't geocode the query (e.g. "Honolulu" → NY cards). Harness now detects the mismatch and resolves the city page (`/en/hotels/united-states/{city-slug}`) instead, reporting `source: hotelsbyday-city-page`. City-page results lack prices/ratings — call `hotel-detail` per property.
 - Night site returns 0 hotels — beta phase with limited inventory; surface beta notice to user
 - Hotel detail page 404 — hotel may not be bookable for the selected date; suggest adjusting dates
 - Price is null in search results — rates are loaded per-hotel on detail page; call `hotel-detail` for pricing

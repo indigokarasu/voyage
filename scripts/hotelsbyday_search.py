@@ -156,6 +156,63 @@ def _extract_hotel_cards(html):
     return hotels
 
 
+def _city_page_hotels(query):
+    """Try to resolve a query to a HotelsByDay city page and extract its hotels.
+
+    The /en/search/results endpoint silently falls back to default (New York)
+    results when it can't geocode a query — so before trusting it, check
+    whether the query matches a known city page (e.g. .../united-states/honolulu)
+    and pull that page's hotel links directly. Returns list of hotels or None.
+    """
+    slug = re.sub(r"[^a-z0-9]+", "-", query.lower()).strip("-")
+    if not slug:
+        return None
+    # Try the direct city-page URL for a handful of likely countries.
+    for country in ("united-states", "canada", "united-kingdom"):
+        url = f"{DAY_BASE}/en/hotels/{country}/{urllib.parse.quote(slug)}"
+        status, body, _ = fetch(url)
+        if status != 200:
+            continue
+        links = re.findall(
+            r'href="(' + re.escape(url) + r'/[^"?]+)[^"]*"',
+            body,
+        )
+        if not links:
+            continue
+        # Names live in title attributes on hotel links only — filter out
+        # generic UI titles (search box, date picker, brand).
+        alt_names = []
+        for m in re.finditer(
+            r'href="(' + re.escape(url) + r'/[^"?]+)[^"]*"[^>]*title="([^"]{5,90})"', body
+        ):
+            alt_names.append(html_module_unescape(m.group(2)).strip())
+        if not alt_names:
+            for m in re.finditer(
+                r'title="([^"]{5,90})"[^>]*href="(' + re.escape(url) + r'/[^"?)+)[^"]*"',
+                body,
+            ):
+                alt_names.append(html_module_unescape(m.group(1)).strip())
+        names = re.findall(r'class="card-hotel-name"[^>]*>(.*?)</div>', body, re.DOTALL)
+        hotels = []
+        for i, href in enumerate(dict.fromkeys(links)):
+            name = ""
+            if i < len(names):
+                name = re.sub(r"<[^>]+>", " ", names[i])
+                name = re.sub(r"&nbsp;", " ", name)
+                name = re.sub(r"\s+", " ", name).strip()
+            if not name and i < len(alt_names):
+                name = html_module_unescape(alt_names[i]).strip()
+            rating_match = re.search(r"(\d+(?:\.\d+)?)\s*/\s*5", name)
+            hotels.append({
+                "url": href,
+                "name": name,
+                "rating": float(rating_match.group(1)) if rating_match else None,
+            })
+        if hotels:
+            return hotels
+    return None
+
+
 def search_day(query, check_in, check_out, guests=1):
     """Search for day-use hotel rooms on the HotelsByDay day-use site."""
     params = urllib.parse.urlencode({
@@ -176,6 +233,29 @@ def search_day(query, check_in, check_out, guests=1):
         return {"error": f"HTTP {status}", "body": body[:500]}
 
     hotels = _extract_hotel_cards(body)
+
+    # Guard against the site's silent fallback: if the returned hotels'
+    # locations don't match the query at all, prefer a resolved city page.
+    q_words = set(re.findall(r"[a-z]+", query.lower()))
+    matched = any(
+        h.get("name") and any(w in h["name"].lower() for w in q_words)
+        for h in hotels
+    )
+    if not matched:
+        city_hotels = _city_page_hotels(query)
+        if city_hotels:
+            return {
+                "source": "hotelsbyday-city-page",
+                "query": query,
+                "check_in": check_in,
+                "check_out": check_out,
+                "guests": guests,
+                "total_hotels": len(city_hotels),
+                "note": ("text search returned unrelated default results; "
+                         "used resolved city page instead"),
+                "hotels": city_hotels,
+            }
+
     return {
         "source": "hotelsbyday-day",
         "query": query,

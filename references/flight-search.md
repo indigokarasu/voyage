@@ -4,8 +4,15 @@
 
 All flight searches run via `execute_code` or `terminal()` using the Hermes venv Python:
 ```bash
-/usr/local/lib/hermes-agent/venv/bin/python3 -c "..."
+$HERMES_PY -c "..."
 ```
+
+**Known limitation (2026-08-23):** `fli` queries Google Flights directly from this
+server's IP, and Google **intermittently soft-blocks datacenter IPs** — searches
+return an empty 95-byte payload (`None` results). One search may succeed, the next
+three fail, with backoff not reliably helping. Treat `None`/0 results as "source
+unavailable, retry later or use LetsFG" — not as "no flights exist". LetsFG runs
+its engine server-side and is immune to this block; prefer it when fli returns empty.
 
 ## fli Library API (v0.x) — Actual Calling Convention
 
