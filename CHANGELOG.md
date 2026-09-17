@@ -1,5 +1,12 @@
 ## [2.7.5] - 2026-04-12
 
+## [3.0.0] - 2026-09-16
+
+### Added
+- **Vesper intake brief delivery** — confirmed travel schedule briefs delivered directly to `ocas-vesper`'s intake directory (`{agent_root}/commons/data/ocas-vesper/intake/`); documented in `references/vesper-intake-delivery.md`.
+- **Bundled plan** — `references/plans/trip-planning.plan.md` (destination research → itinerary → accommodation hueco); added to support file map.
+
+
 ### Changed
 - Replaced `agent-browser` binary requirement with `web-browsing` capability declaration for platform portability
 - Google Hotels setup clarified: available automatically when web browsing capability is present
