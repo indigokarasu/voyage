@@ -12,7 +12,7 @@ includes:
 license: MIT
 metadata:
   author: Indigo Karasu (indigokarasu)
-  version: 2.9.0
+  version: "3.0.0"
 name: ocas-voyage
 source: https://github.com/<agent-handle>/voyage
 tags:
@@ -185,6 +185,7 @@ See `references/okrs.md`.
 - **Taste** — preference-aware recommendations (read-only)
 - **Weave** — trip companion context from social graph (read-only)
 - **Chronicle** — entity observations emitted via journal signal payloads
+- **Vesper** — travel schedule briefs delivered directly to `ocas-vesper`'s intake directory (`{agent_root}/commons/data/ocas-vesper/intake/`) so the morning/evening briefing aggregates pending trip details. See `references/vesper-intake-delivery.md`.
 
 
 ## Journal outputs
@@ -253,7 +254,9 @@ public
 | `references/okrs.md` | When reviewing OKR definitions or scoring skill performance |
 | `references/initialization.md` | On first use; Marriott MCP setup, flights library install, GoPlaces check |
 | `references/self-update.md` | When running voyage.update; full 7-step update procedure |
-| `scripts/hotelsbyday_search.py` | Bundled HotelsByDay harness for day-use rooms and night stays; call via venv Python for quick searches |
+| `references/vesper-intake-delivery.md` | After a trip is confirmed; write the brief to Vesper's intake directory |
+| `references/plans/trip-planning.plan.md` | Before a multi-step trip-planning request; destination research → itinerary → accommodation bundling |
+| `scripts/hotelsbyday_search.py` | Bundled HotelsByDay harness for day-use rooms,and night stays; call via venv Python for quick searches |
 | `scripts/flight_search.py` | Reusable flight search script; call via venv Python for quick one-off searches |
 
 ## Update command
