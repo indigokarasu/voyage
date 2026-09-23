@@ -109,7 +109,7 @@ See `references/flight-search.md` for the full fli API calling convention (inclu
 
 ## Ontology types
 
-Voyage works with these types from `spec-ocas-ontology.md`:
+Voyage works with these types from [[`spec-ocas-ontology.md` ⚠️ Pending spec] ⚠️ Pending spec — not yet authored]:
 
 - **Place** — venues, airports, hotels, restaurants, attractions. Extracted during destination research and itinerary construction.
 - **Concept/Event** — trips and travel events (departure, arrival, check-in, activity). Stored in itinerary records.
