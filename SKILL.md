@@ -14,7 +14,7 @@ metadata:
   author: Indigo Karasu (indigokarasu)
   version: "3.0.0"
 name: ocas-voyage
-source: https://github.com/<agent-handle>/voyage
+source: https://github.com/indigokarasu/voyage
 tags:
 - travel
 - itinerary
